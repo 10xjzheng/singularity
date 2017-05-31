@@ -11,7 +11,7 @@ class UploadController extends Controller
 {
 
     /**
-     * @api �ϴ�ͼƬ
+     * @api 图片上传
      */
     public function uploadImg(Request $request, CMaterial $material)
     {
