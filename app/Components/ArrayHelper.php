@@ -16,16 +16,15 @@ class ArrayHelper
      * @param int $code
      * @param array $arary
      */
-    public static function format($data = [], $code = '0')
+    public static function format($code = '0', $data = [])
     {
-        $response['errorCode'] = $code;
+        $data['errorCode'] = $code;
         if(empty($data['errorInfo'])) {
-            $response['errorInfo'] = config('errorMap.'.$code);
+            $data['errorInfo'] = config('errorMap.'.$code);
         } else {
-            $response['errorInfo'] = config('errorMap.'.$code);
+            $data['errorInfo'] = config('errorMap.'.$code);
         }
-        $response['data'] = $data;
-        return $response;
+        return $data;
     }
 
 }

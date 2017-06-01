@@ -23,6 +23,7 @@ class CMaterial extends Model
     {
         $res = UploadHelper::uploadImg($request);
         if(!$res) {
+            $this->setErrorCode(2001);
             return false;
         }
         return $this->addRecord($res);
@@ -43,6 +44,7 @@ class CMaterial extends Model
         $record->md5 = md5_file($fullPath);
         $record->upload_at = time();
         if(!$record->save()) {
+            $this->setErrorCode(2002);
             return false;
         }
         return ['material_id' => $record->id, 'path' => $path, 'full_path' => $fullPath];
@@ -55,6 +57,6 @@ class CMaterial extends Model
     public function getUrlById($id)
     {
         $record = self::find($id, ['path']);
-        return empty($record) ? '' : $record->path;
+        return empty($record) ? '' : \Storage::disk('upload')->url($record->path);
     }
 }

@@ -15,7 +15,7 @@ class InfoController extends Controller
     public function getInfo()
     {
         $id = Input::get('id');
-        return ArrayHelper::format(CUser::find($id));
+        return ArrayHelper::format(0, ['data' => CUser::find($id)]);
     }
 
     /**

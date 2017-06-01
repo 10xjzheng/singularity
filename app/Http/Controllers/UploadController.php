@@ -15,6 +15,7 @@ class UploadController extends Controller
      */
     public function uploadImg(Request $request, CMaterial $material)
     {
-        return ArrayHelper::format($material->uploadImg($request));
+        $result = $material->uploadImg($request);
+        return ArrayHelper::format($result ? 0 : $material->getErrorCode(), ['data' => $result ?: []]);
     }
 }
