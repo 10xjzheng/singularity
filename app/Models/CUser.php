@@ -11,8 +11,7 @@ class CUser extends Model
 
     protected $dates = ['created_at', 'updated_at', 'last_active_time'];
     /**
-     * 关联到模型的数据表
-     *
+     * 琛ㄥ悕
      * @var string
      */
     protected $table = 'sg_user';

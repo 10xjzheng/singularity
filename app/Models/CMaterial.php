@@ -16,7 +16,7 @@ class CMaterial extends Model
     protected $table = 'sg_material';
 
     /**
-     * 上传图片
+     * 涓婁紶鍥剧墖
      * @param Request $request
      */
     public function uploadImg(Request $request)
@@ -30,7 +30,7 @@ class CMaterial extends Model
      }
 
     /**
-     * 添加记录
+     * 娣诲姞璁板綍
      * @param $path
      * @return array|bool
      */
@@ -51,7 +51,7 @@ class CMaterial extends Model
     }
 
     /**
-     * 获取图片链接
+     * 鑾峰彇鍥剧墖閾炬帴
      * @param int $id
      */
     public function getUrlById($id)
