@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Input;
 class InfoController extends Controller
 {
     /**
-     * @api 获取个人信息
+     * @api 鑾峰彇鐢ㄦ埛淇℃伅
      * @return mixed
      */
     public function getInfo()
@@ -19,7 +19,7 @@ class InfoController extends Controller
     }
 
     /**
-     * @api 获取申请统计
+     * @api 鑾峰彇鐢宠缁熻
      * @return mixed
      */
     public function applyStat()
@@ -28,7 +28,7 @@ class InfoController extends Controller
     }
 
     /**
-     * @api 获取申请列表
+     * @api 鑾峰彇鐢宠鍒楄〃
      * @return mixed
      */
     public function applyList()
@@ -37,7 +37,7 @@ class InfoController extends Controller
     }
 
     /**
-     * @api 获取申请详情
+     * @api 鐢宠璇︽儏
      * @return mixed
      */
     public function applyDetail()
@@ -46,7 +46,7 @@ class InfoController extends Controller
     }
 
     /**
-     * @api 提交申请
+     * @api 鎻愪氦鐢宠
      * @return mixed
      */
     public function submitApply()

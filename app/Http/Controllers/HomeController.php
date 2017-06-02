@@ -13,7 +13,7 @@ class HomeController extends Controller
 {
 
     /**
-     * @api »ñÈ¡ÂÖ²¥Í¼
+     * @api è·å–è½®æ’­å›¾
      */
     public function banners(CBanner $banner, CMaterial $material)
     {
@@ -21,7 +21,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @api »ñÈ¡×ÊÑ¶ÁĞ±í
+     * @api è·å–æ–°é—»åˆ—è¡¨
      */
     public function newsList(CNews $news, CMaterial $material)
     {
@@ -31,7 +31,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @api »ñÈ¡×ÊÑ¶ÏêÇé
+     * @api è·å–æ–°é—»è¯¦æƒ…
      */
     public function newsDetail(CNews $news, CMaterial $material)
     {
