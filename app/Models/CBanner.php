@@ -9,7 +9,7 @@ class CBanner extends Model
     protected $table = 'sg_banner';
 
     /**
-     * è·å–è½®æ’­å›¾åˆ—è¡¨
+     * »ñÈ¡ÂÖ²¥Í¼ÁĞ±í
      * @param CMaterial $material
      * @param $wechatId
      */
