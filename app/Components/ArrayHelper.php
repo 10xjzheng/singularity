@@ -3,16 +3,21 @@
  * Created by PhpStorm.
  * User: Administrator
  * Date: 2017/5/30 0030
- * Time: ÏÂÎç 12:22
+ * Time: ä¸Šåˆ 12:22
  */
 
 namespace App\Components;
 
 
+/**
+ *
+ * Class ArrayHelper
+ * @package App\Components
+ */
 class ArrayHelper
 {
     /**
-     * ¸ñÊ½»¯·µ»ØÊı¾İ
+     * è¿”å›å‚æ•°æ ¼å¼åŒ–
      * @param int $code
      * @param array $arary
      */

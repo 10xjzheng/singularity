@@ -21,7 +21,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @api 获取新闻列表
+     * @api 获取资讯列表
      */
     public function newsList(CNews $news, CMaterial $material)
     {
@@ -31,7 +31,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @api 获取新闻详情
+     * @api 获取资讯详情
      */
     public function newsDetail(CNews $news, CMaterial $material)
     {

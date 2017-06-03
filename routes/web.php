@@ -15,24 +15,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 /**----------------Home---------------**/
-//ÂÖ²¥Í¼
+//è½®æ’­å›¾
 Route::post('home/banners', 'HomeController@banners');
-//ĞÂÎÅÁĞ±í
+//èµ„è®¯åˆ—è¡¨
 Route::post('home/newsList', 'HomeController@newsList');
-//ĞÂÎÅÏêÇé
+//èµ„è®¯è¯¦æƒ…
 Route::post('home/newsDetail', 'HomeController@newsDetail');
 
 /**----------------Info---------------**/
-//¸öÈËĞÅÏ¢
+//ä¸ªäººä¿¡æ¯
 Route::post('info/getInfo', 'InfoController@getInfo');
-//ÉêÇëÍ³¼Æ
+//ç”³è¯·ç»Ÿè®¡
 Route::post('info/applyStat', 'InfoController@applyStat');
-//ÉêÇëÁĞ±í
+//ç”³è¯·åˆ—è¡¨
 Route::post('info/applyList', 'InfoController@applyList');
-//ÉêÇëÏêÇé
+//ç”³è¯·è¯¦æƒ…
 Route::post('info/applyDetail', 'InfoController@applyDetail');
-//Ìá½»ÉêÇë
+//æäº¤ç”³è¯·
 Route::post('info/submitApply', 'InfoController@submitApply');
 
-/**-----------------Í¼Æ¬ÉÏ´«----------------*/
+/**-----------------æ–‡ä»¶ä¸Šä¼ ----------------*/
 Route::post('uploadImg', 'UploadController@uploadImg');

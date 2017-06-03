@@ -12,18 +12,19 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * 公众号ID
+     * 鍏紬鍙稩D
      * @var int
      */
     protected  $wechatId = 1;
 
     /**
-     * 用户ID
+     * 鐢ㄦ埛ID
      * @var int
      */
     protected  $userId = 1;
+
     /**
-     * 初始化
+     * 鐧诲綍澶勭悊
      */
     public function __construct()
     {
