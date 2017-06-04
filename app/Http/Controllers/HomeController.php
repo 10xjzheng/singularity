@@ -35,7 +35,7 @@ class HomeController extends Controller
      */
     public function newsDetail(CNews $news, CMaterial $material)
     {
-        return ArrayHelper::format(0, $news->getDetail(Input::get('newsId', 0), $material));
+        return ArrayHelper::format(0, ['data' => $news->getDetail(Input::get('newsId', 0), $material)]);
     }
 
 }

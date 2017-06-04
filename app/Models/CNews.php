@@ -22,6 +22,7 @@ class CNews extends Model
         $count = self::where('wechat_id', $wechatId)->count();
         foreach ($list as &$row) {
             $row['main_pic'] = $material->getUrlById($row['main_pic_id']);
+            $row['url'] = '/newsDetail/' . $row['id'];
         }
         return ['data' => $list, 'count' => $count];
     }

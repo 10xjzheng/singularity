@@ -15,4 +15,15 @@ class CUser extends Model
      * @var string
      */
     protected $table = 'sg_user';
+
+    /**
+     * 保存个人信息
+     * @param string $openId
+     */
+    public function saveInfo($openId, $data = [])
+    {
+        self::unguard();
+        return self::updateOrCreate(['open_id' => $openId], $data);
+    }
+
 }

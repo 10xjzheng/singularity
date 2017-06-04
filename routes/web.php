@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 /**----------------Home---------------**/
 //轮播图
@@ -36,3 +36,5 @@ Route::post('info/submitApply', 'InfoController@submitApply');
 
 /**-----------------文件上传----------------*/
 Route::post('uploadImg', 'UploadController@uploadImg');
+/*-------------------处理微信请求----------------*/
+Route::any('/wechat', 'WechatController@serve');

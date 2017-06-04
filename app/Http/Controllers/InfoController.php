@@ -13,10 +13,10 @@ class InfoController extends Controller
      * @api 获取用户信息
      * @return mixed
      */
-    public function getInfo()
+    public function getInfo(CUser $user)
     {
-        $id = Input::get('id');
-        return ArrayHelper::format(0, ['data' => CUser::find($id)]);
+        $openId = Input::get('openId');
+        return ArrayHelper::format(0, ['data' => $user->saveInfo($openId)]);
     }
 
     /**
