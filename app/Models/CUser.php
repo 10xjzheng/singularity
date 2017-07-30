@@ -26,4 +26,8 @@ class CUser extends Model
         return self::updateOrCreate(['open_id' => $openId], $data);
     }
 
+    public function getInfo($id)
+    {
+        return ['data' => self::find($id)];
+    }
 }

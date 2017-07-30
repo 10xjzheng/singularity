@@ -15,8 +15,7 @@ class InfoController extends Controller
      */
     public function getInfo(CUser $user)
     {
-        $openId = Input::get('openId');
-        return ArrayHelper::format(0, ['data' => $user->saveInfo($openId)]);
+        return ArrayHelper::format(0, $user->getInfo($this->userId));
     }
 
     /**
@@ -30,6 +29,7 @@ class InfoController extends Controller
 
     /**
      * @api 获取申请列表
+     * @param int type 类型
      * @return mixed
      */
     public function applyList(CApplyNote $applyNote)
@@ -62,8 +62,8 @@ class InfoController extends Controller
             'apply_type' => Input::get('apply_type', ''),
             'credit_card' => (int)Input::get('credit_card', 0),
             'quota' => Input::get('quota', 0),
-            'sum' => Input::get('sum', 0),
-            'asset' => implode(',', Input::get('asset', [])),
+            'sum' => (float)Input::get('sum', 0),
+            'asset' => implode(',', Input::get('assets', [])),
             'banks' => implode(',', Input::get('banks', [])),
         ];
         $result = $applyNote->submitApply($this->wechatId, $this->userId, $data);

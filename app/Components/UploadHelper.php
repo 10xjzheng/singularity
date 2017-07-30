@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Administrator
  * Date: 2017/5/30 0030
- * Time: ÏÂÎç 7:39
+ * Time: ï¿½ï¿½ï¿½ï¿½ 7:39
  */
 
 namespace App\Components;
@@ -14,25 +14,24 @@ use Illuminate\Support\Facades\Storage;
 class UploadHelper
 {
      /**
-      * Í¼Æ¬ÉÏ´«
+      * Í¼Æ¬ï¿½Ï´ï¿½
      * @param Request $request
      */
      public static function uploadImg(Request $request)
      {
          $file = $request->file('img');
 
-         // ÎÄ¼þÊÇ·ñÉÏ´«³É¹¦
+         // å›¾ç‰‡ä¸Šä¼ 
          if ($file->isValid()) {
 
-             // »ñÈ¡ÎÄ¼þÏà¹ØÐÅÏ¢
-             //$originalName = $file->getClientOriginalName(); // ÎÄ¼þÔ­Ãû
-             $ext = $file->getClientOriginalExtension();     // À©Õ¹Ãû
-             $realPath = $file->getRealPath();   //ÁÙÊ±ÎÄ¼þµÄ¾ø¶ÔÂ·¾¶
+             //$originalName = $file->getClientOriginalName(); //
+             $ext = $file->getClientOriginalExtension();     // æ‰©å±•å
+             $realPath = $file->getRealPath();   //è·¯å¾„
              //$type = $file->getClientMimeType();     // image/jpeg
 
-             // ÉÏ´«ÎÄ¼þ
+             //é‡å‘½å
              $filename = date('Ymd') . '/' . date('YmdHis') . '-' . uniqid() . '.' . $ext;
-             // Ê¹ÓÃÎÒÃÇÐÂ½¨µÄuploads±¾µØ´æ´¢¿Õ¼ä£¨Ä¿Â¼£©
+             // ä¿å­˜å›¾ç‰‡
              if(!Storage::disk('upload')->put($filename, file_get_contents($realPath))) {
                  return false;
              }
