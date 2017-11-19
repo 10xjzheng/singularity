@@ -70,15 +70,19 @@ class CApplyNote extends Model
      * 获取申请列表
      * @param int $type
      */
-    public function getList($userId, $type, $currentPage = 1, $pageSize = 10)
+    public function getList($userId, $type, $searchName, $currentPage = 1, $pageSize = 10)
     {
         $offset = ($currentPage - 1) * $pageSize;
         $where = ['user_id'=> $userId];
         if($type > 0) {
             $where['type'] = $type;
         }
-        $list = self::where($where)->orderBy('id', 'desc')->offset($offset)->limit($pageSize)->get();
-        $count = self::where($where)->count();
+        $query = self::where($where);
+        $query->when($searchName, function($query) use ($searchName){
+            $query->where('name', 'like', '%' . $searchName . '%')->orWhere('mobile', 'like', '%' . $searchName . '%');
+        });
+        $list = $query->orderBy('id', 'desc')->offset($offset)->limit($pageSize)->get();
+        $count = $query->count();
         return ['data' => $list, 'count' => $count];
     }
 
@@ -97,5 +101,17 @@ class CApplyNote extends Model
             'unionNum' => self::where(['user_id' => $userId, 'type' => self::TYPE_UNION])->count()
             ]
         ];
+    }
+
+    /**
+     * 更新状态
+     * @param $id
+     * @param $status
+     */
+    public function changeStatus($id, $status)
+    {
+        $model = self::find($id);
+        $model->status = $status;
+        return $model->save();
     }
 }

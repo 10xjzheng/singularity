@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Modules\Admin\Http\Controllers;
 
 use App\Components\ArrayHelper;
 use App\Models\CApplyNote;
@@ -36,8 +36,9 @@ class InfoController extends Controller
     {
         $currentPage = Input::get('currentPage', 1);
         $pageSize = Input::get('pageSize', 10);
-        $type = Input::get('type', 0);
-        return ArrayHelper::format(0, $applyNote->getList($this->userId, $type, '', $currentPage, $pageSize));
+        $type = (int)Input::get('type', 0);
+        $searchName = Input::get('searchName', '');
+        return ArrayHelper::format(0, $applyNote->getList($this->userId, $type, $searchName, $currentPage, $pageSize));
     }
 
     /**
@@ -68,5 +69,27 @@ class InfoController extends Controller
         ];
         $result = $applyNote->submitApply($this->wechatId, $this->userId, $data);
         return ArrayHelper::format($result ? 0 : $applyNote->getErrorCode());
+    }
+
+    /**
+     * @api 修改申请状态
+     * @return mixed
+     */
+    public function editApply(CApplyNote $applyNote)
+    {
+        $id = (int)Input::get('id', '');
+        $status = (int)Input::get('status', '');
+        $result = $applyNote->changeStatus($id, $status);
+        return ArrayHelper::format($result ? 0 : $applyNote->getErrorCode());
+    }
+
+    /**
+     * @api 删除记录
+     * @return mixed
+     */
+    public function delNote(CApplyNote $applyNote)
+    {
+        $id = (int)Input::get('id', '');
+        return ArrayHelper::format($applyNote::destroy($id) ? 0 : $applyNote->getErrorCode());
     }
 }

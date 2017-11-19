@@ -1,0 +1,1374 @@
+<!--人员管理-->
+<div class="oaAdminister">
+    <el-breadcrumb separator="/" class="mb20">
+        <el-breadcrumb-item>OA</el-breadcrumb-item>
+        <el-breadcrumb-item>人员管理</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-tabs v-model="activeName" @tab-click="tabClick">
+        <el-row class="mb5">
+            <el-col :span="12" v-if="getModuleRight('oaAdminister')">
+                <el-col :span="6" class="mr10">
+                    <xjk-select :hasCheck="true" v-model="orgId" marking="oaAdminister" placeholder="请选择隶属机构" @change="getList(1)" @checkValueFn="getCheck"></xjk-select>
+                </el-col>
+                <el-col :span="4" class="mr10">
+                    <el-select v-model="value" placeholder="请选择">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-col>
+                <el-col :span="8" >
+                    <el-input class="w300 mb10" placeholder="搜索" v-model="currentQuery">
+                        <el-button slot="append" icon="search" @click="handleClick"></el-button>
+                    </el-input>
+                </el-col>
+
+            </el-col>
+            <el-col :span="12" class="tr">
+                <el-button type="primary" @click="exportList">导出Excel</el-button>
+                <el-upload
+                        class="upload-demo"
+                        action="/employee/import"
+                        name="file[]"
+                        :show-file-list="false"
+                        :on-error="errorFun"
+                        :on-success="sccessFun"
+                        v-if="getModuleRight('oaAdminister')"
+                >
+                    <el-button type="primary">批量导入</el-button>
+                </el-upload>
+
+                <el-button type="primary" @click="downloadTemplate" v-if="getModuleRight('oaAdminister')">下载模板</el-button>
+            </el-col>
+        </el-row>
+        <el-row class="mb10">
+            <div class="block">
+                <span class="demonstration">入职时间：</span>
+                <el-date-picker
+                        v-model="value6"
+                        type="daterange"
+                        placeholder="选择日期范围" @change="getList()">
+                </el-date-picker>
+            </div>
+        </el-row>
+        <el-tab-pane v-if="getModuleRight('oaAdminister')" label="在职" name="oaAdministerJob">
+            <el-table
+                    :data="list"
+                    border
+                    style="width: 100%">
+                <el-table-column label="编号" type="index" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="姓名" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="organization"
+                        label="隶属机构" width="150">
+                </el-table-column>
+                <el-table-column
+                        prop="position"
+                        label="职位" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="mobile"
+                        label="手机号" width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="idCard"
+                        label="身份证号" width="300">
+                </el-table-column>
+                <el-table-column
+                        prop="sex"
+                        label="性别" :formatter="formatter" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="age"
+                        label="年龄" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="entryDate"
+                        label="入职时间" width="150">
+                </el-table-column>
+                <el-table-column
+                        prop="workingAge"
+                        label="司龄" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="状态" width="120">
+                    <template scope="scope">
+                        在职
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="240" fixed="right">
+                    <template scope="scope">
+                        <el-button v-if="getModuleRight('oaAdminister')" size="small" @click="dialogTitle ='员工基本信息';employeeId = scope.row.id;lookDetail(scope.row,scope.$index);lookToggleDialog = true;">查看</el-button>
+                        <el-button v-if="getModuleRight('oaAdminister')" size="small" @click="dialogTitle ='修改人员';employeeId = scope.row.id;lookDetail(scope.row,scope.$index);editSubmit(scope.row,scope.$index)">修改</el-button>
+                        <el-button size="small" @click="showCode(scope.row);dialogYl = true">二维码</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+        </el-tab-pane>
+        <el-tab-pane v-if="getModuleRight('oaAdminister')" label="试用" name="oaAdministerTry">
+            <el-table
+                    :data="list"
+                    border
+                    style="width: 100%">
+                <el-table-column type="index" width="50">
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="姓名" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="organization"
+                        label="隶属机构" width="150">
+                </el-table-column>
+                <el-table-column
+                        prop="position"
+                        label="职位" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="mobile"
+                        label="手机号" width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="idCard"
+                        label="身份证号" width="300">
+                </el-table-column>
+                <el-table-column
+                        prop="sex"
+                        label="性别" :formatter="formatter" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="age"
+                        label="年龄" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="entryDate"
+                        label="入职时间" width="150">
+                </el-table-column>
+                <el-table-column
+                        prop="workingAge"
+                        label="司龄" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="状态" width="120">
+                    <template scope="scope">
+                        试用
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="240" fixed="right">
+                    <template scope="scope">
+                        <el-button v-if="getModuleRight('oaAdminister')" size="small" @click="dialogTitle ='员工基本信息';employeeId = scope.row.id;lookDetail(scope.row,scope.$index);lookToggleDialog = true;">查看</el-button>
+                        <el-button v-if="getModuleRight('oaAdminister')" size="small" @click="dialogTitle ='修改人员';employeeId = scope.row.id;lookDetail(scope.row,scope.$index);editSubmit(scope.row,scope.$index)">修改</el-button>
+                        <el-button size="small" @click="showCode(scope.row);dialogYl = true">二维码</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+        </el-tab-pane>
+        <el-tab-pane v-if="getModuleRight('oaAdminister')" label="未激活" name="oaAdministerUn">
+            <el-table
+                    :data="list"
+                    border
+                    style="width: 100%">
+                <el-table-column type="index" width="50">
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="姓名" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="organization"
+                        label="隶属机构" width="150">
+                </el-table-column>
+                <el-table-column
+                        prop="position"
+                        label="职位" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="mobile"
+                        label="手机号" width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="idCard"
+                        label="身份证号" width="300">
+                </el-table-column>
+                <el-table-column
+                        prop="sex"
+                        label="性别" :formatter="formatter" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="age"
+                        label="年龄" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="entryDate"
+                        label="入职时间" width="150">
+                </el-table-column>
+                <el-table-column
+                        prop="workingAge"
+                        label="司龄" width="120">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="状态" width="120">
+                    <template scope="scope">
+                        未激活
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="180" fixed="right">
+                    <template scope="scope">
+                        <el-button v-if="getModuleRight('oaAdminister')" size="small" @click="dialogTitle ='员工基本信息';employeeId = scope.row.id;lookDetail(scope.row,scope.$index);lookToggleDialog = true;">查看</el-button>
+                        <el-button v-if="getModuleRight('oaAdminister')" size="small" @click="dialogTitle ='修改人员';employeeId = scope.row.id;lookDetail(scope.row,scope.$index);editSubmit(scope.row,scope.$index)">修改</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-tab-pane>
+        <div class="el-row mt10">
+            <div class="l">
+                <el-button type="primary" v-if="getModuleRight('oaAdminister')" @click="dialogTitle ='新增员工';toggleDialog = true">新增员工</el-button>
+            </div>
+            <div class="r">
+                <el-pagination
+                        @current-change="handleCurrentChange"
+                        :current-page="pageInfo.currentPage"
+                        :page-sizes="[10, 20, 30, 40]"
+                        :page-size="pageInfo.pageSize"
+                        layout="total, prev, pager, next"
+                        :total="pageInfo.total">
+                </el-pagination>
+            </div>
+        </div>
+    </el-tabs>
+    <!-- 添加-->
+    <el-dialog  :title="dialogTitle" top="0%" v-model="toggleDialog" @close="dialogClose" size="large">
+        <el-form :model="form" :rules="rules" ref="form">
+            <el-row class="mb10">
+                <el-col class="w280">
+                    <el-form-item label="点击上传头像" label-width="130px">
+                        <el-upload
+                                class="avatar-uploader"
+                                name="img"
+                                action="/upload/image"
+                                :show-file-list="false"
+                                :on-success="handleAvatarSuccess">
+                            <!--:before-upload="beforeAvatarUpload">-->
+                            <img v-if="form.avatar" :src="form.avatar" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="18" class="calc320">
+                    <el-col :span="12">
+                        <el-form-item label="姓名" label-width="130px" prop="name">
+                            <el-input v-model="form.name" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="邮箱" label-width="130px">
+                            <el-input v-model="form.email" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别" label-width="130px">
+                            <el-input v-model="sex" auto-complete="off" :disabled="true"></el-input>
+                        </el-form-item>
+                        <el-form-item label="户籍类型" label-width="130px">
+                            <el-select placeholder="" v-model="form.residenceType"  class="pct100">
+                                <el-option label="本市城镇" value="本市城镇"></el-option>
+                                <el-option label="本市非城镇" value="本市非城镇"></el-option>
+                                <el-option label="外阜城镇" value="外阜城镇"></el-option>
+                                <el-option label="外阜非城镇" value="外阜非城镇"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="手机号码" label-width="130px" prop="mobile">
+                            <el-input v-model="form.mobile" auto-complete="off"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="身份证号" label-width="130px" prop="idCard" v-if="checkType == '0'">
+                            <el-input placeholder="" v-model="form.idCard">
+                                <template slot="append">
+                                    <span class="poi" @click="cardCheck(form.idCard,0)">校验</span>
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="身份证号" label-width="130px" v-else>
+                            <el-input placeholder="" v-model="form.idCard">
+                                <template slot="append">
+                                    <span class="poi" @click="cardCheck(form.idCard,0)">校验</span>
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="出生日期" label-width="130px">
+                            <el-input auto-complete="off" v-model="birthday" :disabled="true"></el-input>
+                        </el-form-item>
+                        <el-form-item label="户籍城市" label-width="130px">
+                            <el-input v-model="form.residenceCity" auto-complete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="户籍地址" label-width="130px">
+                            <el-input v-model="form.residenceAddress" auto-complete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="所在地区" class="is-required"  label-width="130px">
+                            <el-col :span="10">
+                                <el-cascader
+                                        :options="areas"
+                                        v-model="form.addresser"
+                                        :props="areasProps" class="pct100">
+                                </el-cascader>
+                            </el-col>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="详细地址" label-width="130px">
+                            <el-input v-model="form.address" auto-complete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="民族" label-width="130px">
+                            <el-select placeholder="" v-model="form.nation"  class="pct100">
+                                <el-option :label="item" :value="item" v-for="item in nations" :key="item"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        </el-form-item>
+                        <el-form-item label="婚姻状况" label-width="130px">
+                            <el-select placeholder="" class="pct100" v-model="form.marriage">
+                                <el-option label="未婚" value="未婚"></el-option>
+                                <el-option label="已婚" value="已婚"></el-option>
+                                <el-option label="离异" value="离异"></el-option>
+                                <el-option label="丧偶" value="丧偶"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="学位" label-width="130px">
+                            <el-select placeholder="" class="pct100" v-model="form.degree">
+                                <el-option label="学士" value="学士"></el-option>
+                                <el-option label="硕士" value="硕士"></el-option>
+                                <el-option label="博士" value="博士"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="入职时间" label-width="130px" prop="entryDate" required>
+                            <el-date-picker
+                                    type="date"
+                                    placeholder="选择日期"
+                                    v-model="form.entryDate"
+                                    :picker-options="pickerOptions0" style="width:100%">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="合同日期" label-width="130px">
+                            <el-date-picker
+                                    type="date"
+                                    placeholder="选择日期"
+                                    v-model="form.contractDate"
+                                    :picker-options="pickerOptions0"  style="width:100%">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="试用期薪资" label-width="130px">
+                            <el-input placeholder="请输入内容" v-model="form.probationWage">
+                                <template slot="append">元</template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="隶属机构" label-width="130px" prop="orgId">
+                            <xjk-select v-model="form.orgId" marking="oaAdminister" class="pct100" placeholder="请选择隶属机构" @change="change"></xjk-select>
+                            <!--<el-select filterable v-model="form.orgId" placeholder="隶属机构" class="pct100" @change="change" v-if="getModuleRight('oaAdminister')">-->
+                            <!--<el-option v-for="org in selectOrgs" :label="org.name" :value="org.id" :key="org.id">-->
+                            <!--<span v-html="org.space"></span>-->
+                            <!--<span v-html="org.name"></span>-->
+                            <!--</el-option>-->
+                            <!--</el-select>-->
+                        </el-form-item>
+                        <el-form-item label="紧急联系人" label-width="130px">
+                            <el-input v-model="form.linkMan" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="紧急联系人电话" label-width="130px">
+                            <el-input v-model="form.linkPhone" auto-complete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="政治面貌" label-width="130px">
+                            <el-select placeholder="" class="pct100" v-model="form.politicalStatus">
+                                <el-option label="群众" value="群众"></el-option>
+                                <el-option label="共产党员" value="共产党员"></el-option>
+                                <el-option label="团员" value="团员"></el-option>
+                                <el-option label="民主党派" value="民主党派"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="学历" label-width="130px">
+                            <el-select placeholder="" class="pct100" v-model="form.education">
+                                <el-option label="博士" value="博士"></el-option>
+                                <el-option label="硕士" value="硕士"></el-option>
+                                <el-option label="本科" value="本科"></el-option>
+                                <el-option label="大专" value="大专"></el-option>
+                                <el-option label="高中" value="高中"></el-option>
+                                <el-option label="中专" value="中专"></el-option>
+                                <el-option label="初中及以下" value="初中及以下"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="专业" label-width="130px">
+                            <el-input v-model="form.major" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="转正日期" label-width="130px">
+                            <el-date-picker
+                                    type="date"
+                                    placeholder="选择日期"
+                                    v-model="form.positiveDate"
+                                    :picker-options="pickerOptions0"  style="width:100%">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="合同年限" label-width="130px">
+                            <el-input v-model="form.contractYears" auto-complete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="转正薪资" label-width="130px">
+                            <el-input placeholder="请输入内容" v-model="form.wage">
+                                <template slot="append">元</template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="职位" label-width="130px" prop="positionId">
+                            <el-select placeholder="请选择职位" class="pct100" v-model="form.positionId">
+                                <el-option v-for="item in listposition" :label="item.name" :value="item.id" :key="item.id"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="　" label-width="130px">
+                        </el-form-item>
+                        <el-form-item label="紧急联系人关系" label-width="130px">
+                            <el-input v-model="form.relation" auto-complete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-col>
+            </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="toggleDialog = false">取 消</el-button>
+            <el-button type="primary" @click="submitPos">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!-- 修改 -->
+    <el-dialog :title="dialogTitle" top="0%" v-model="editToggleDialog"  size="large" @close="clearFileListData">
+        <el-form :model="detailList" :rules="rules" ref="forms">
+            <el-tabs v-model="nameActive">
+                <el-tab-pane label="编辑基本信息" name="first">
+                    <el-row class="mb10">
+                        <el-col class="w280">
+                            <el-form-item label="点击上传头像" label-width="130px">
+                                <el-upload
+                                        class="avatar-uploader"
+                                        name="img"
+                                        action="/upload/image"
+                                        :show-file-list="false"
+                                        :on-success="editHandleAvatarSuccess">
+                                    <!--:before-upload="beforeAvatarUpload">-->
+                                    <img v-if="detailList.avatar" :src="detailList.avatar" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="18" class="calc320">
+                            <el-col :span="12">
+                                <el-form-item label="姓名" label-width="130px" prop="name">
+                                    <el-input v-model="detailList.name" auto-complete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="邮箱" label-width="130px">
+                                    <el-input v-model="detailList.email" auto-complete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="性别" label-width="130px">
+                                    <el-input v-model="detailList.sex" auto-complete="off" :disabled="true"></el-input>
+                                </el-form-item>
+                                <el-form-item label="户籍类型" label-width="130px">
+                                    <el-select placeholder="" v-model="detailList.residenceType"  class="pct100">
+                                        <el-option label="本市城镇" value="本市城镇"></el-option>
+                                        <el-option label="本市非城镇" value="本市非城镇"></el-option>
+                                        <el-option label="外阜城镇" value="外阜城镇"></el-option>
+                                        <el-option label="外阜非城镇" value="外阜非城镇"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="手机号码" label-width="130px" prop="mobile">
+                                    <el-input v-model="detailList.mobile" auto-complete="off"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="身份证号" label-width="130px" prop="idCard" v-if="checkType == '0'">
+                                    <el-input placeholder="" v-model="detailList.idCard">
+                                        <template slot="append">
+                                            <span class="poi" @click="cardCheck(detailList.idCard)">校验</span>
+                                        </template>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="身份证号" label-width="130px" v-else>
+                                    <el-input placeholder="" v-model="detailList.idCard">
+                                        <template slot="append">
+                                            <span class="poi" @click="cardCheck(detailList.idCard)">校验</span>
+                                        </template>
+                                    </el-input>
+                                </el-form-item>
+
+                                <el-form-item label="出生日期" label-width="130px">
+                                    <el-input v-model="detailList.birthday" auto-complete="off" :disabled="true"></el-input>
+                                </el-form-item>
+                                <el-form-item label="户籍城市" label-width="130px">
+                                    <el-input v-model="detailList.residenceCity" auto-complete="off"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="24">
+                                <el-form-item label="户籍地址" label-width="130px" >
+                                    <el-input v-model="detailList.residenceAddress" auto-complete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="所在地区" label-width="130px" class="czdz is-required">
+                                    <el-col :span="11">
+                                        <el-cascader
+                                                :options="areas"
+                                                v-model="addresser"
+                                                :props="areasProps" class="pct100">
+                                        </el-cascader>
+                                    </el-col>
+                                </el-form-item>
+                                <el-form-item label="详细地址" label-width="130px">
+                                    <el-input v-model="detailList.address" auto-complete="off"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="民族" label-width="130px">
+                                    <el-select placeholder="" v-model="detailList.nation"  class="pct100">
+                                        <el-option :label="item" :value="item" v-for="item in nations" :key="item"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="婚姻状况" label-width="130px">
+                                    <el-select placeholder="" class="pct100" v-model="detailList.marriage">
+                                        <el-option label="未婚" value="未婚"></el-option>
+                                        <el-option label="已婚" value="已婚"></el-option>
+                                        <el-option label="离异" value="离异"></el-option>
+                                        <el-option label="丧偶" value="丧偶"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="学位" label-width="130px">
+                                    <el-select placeholder="" class="pct100" v-model="detailList.degree">
+                                        <el-option label="学士" value="学士"></el-option>
+                                        <el-option label="硕士" value="硕士"></el-option>
+                                        <el-option label="博士" value="博士"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="入职时间" label-width="130px" ><!--prop="entryDate"-->
+                                    <el-date-picker
+                                            type="date"
+                                            placeholder="选择日期"
+                                            v-model="detailList.entryDate"
+                                            :picker-options="pickerOptions0" style="width:100%">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="合同日期" label-width="130px">
+                                    <el-date-picker
+                                            type="date"
+                                            placeholder="选择日期"
+                                            v-model="detailList.contractDate"
+                                            :picker-options="pickerOptions0"  style="width:100%">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="试用期薪资" label-width="130px">
+                                    <el-input placeholder="请输入内容" v-model="detailList.probationWage">
+                                        <template slot="append">元</template>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="隶属机构" label-width="130px" prop="orgId">
+                                    <el-input placeholder="请输入内容" v-model="detailList.organization" :disabled="true"></el-input>
+                                </el-form-item>
+                                <el-form-item label="司龄" label-width="130px">
+                                    <el-input placeholder="请输入内容" v-model="detailList.workingAge" :disabled="true">
+                                        <template slot="append">月</template>
+                                    </el-input>
+
+                                </el-form-item>
+                                <el-form-item label="紧急联系人" label-width="130px">
+                                    <el-input v-model="detailList.linkMan" auto-complete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="紧急联系人电话" label-width="130px">
+                                    <el-input v-model="detailList.linkPhone" auto-complete="off"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="政治面貌" label-width="130px">
+                                    <el-select placeholder="" class="pct100" v-model="detailList.politicalStatus">
+                                        <el-option label="群众" value="群众"></el-option>
+                                        <el-option label="共产党员" value="共产党员"></el-option>
+                                        <el-option label="团员" value="团员"></el-option>
+                                        <el-option label="民主党派" value="民主党派"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="学历" label-width="130px">
+                                    <el-select placeholder="" class="pct100" v-model="detailList.education">
+                                        <el-option label="博士" value="博士"></el-option>
+                                        <el-option label="硕士" value="硕士"></el-option>
+                                        <el-option label="本科" value="本科"></el-option>
+                                        <el-option label="大专" value="大专"></el-option>
+                                        <el-option label="高中" value="高中"></el-option>
+                                        <el-option label="中专" value="中专"></el-option>
+                                        <el-option label="初中及以下" value="初中及以下"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="专业" label-width="130px">
+                                    <el-input v-model="detailList.major" auto-complete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="转正日期" label-width="130px">
+                                    <el-date-picker
+                                            type="date"
+                                            placeholder="选择日期"
+                                            v-model="detailList.positiveDate"
+                                            :picker-options="pickerOptions0"  style="width:100%">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="合同年限" label-width="130px">
+                                    <el-input v-model="detailList.contractYears" auto-complete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="转正薪资" label-width="130px">
+                                    <el-input placeholder="请输入内容"  v-model="detailList.wage">
+                                        <template slot="append">元</template>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="职位" label-width="130px" prop="positionId">
+                                    <el-input placeholder="请输入内容" v-model="detailList.position" :disabled="true"></el-input>
+                                </el-form-item>
+                                <el-form-item label="　" label-width="130px">
+                                </el-form-item>
+                                <el-form-item label="紧急联系人关系" label-width="130px">
+                                    <el-input v-model="detailList.relation" auto-complete="off"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-col>
+                    </el-row>
+                </el-tab-pane>
+                <el-tab-pane label="编辑教育情况" name="second">
+                    <el-table
+                            :data="studyList"
+                            style="width: 100%">
+                        <el-table-column
+                                prop="beginTime"
+                                label="入学时间"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="endTime"
+                                label="毕业时间"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="instruction"
+                                label="院校">
+                        </el-table-column>
+                        <el-table-column
+                                prop="item"
+                                label="专业">
+                        </el-table-column>
+                        <el-table-column
+                                prop="education"
+                                label="学历">
+                        </el-table-column>
+                        <el-table-column
+                                prop="degree"
+                                label="学位">
+                        </el-table-column>
+                        <el-table-column
+                                prop="remark"
+                                label="备注">
+                        </el-table-column>
+                        <el-table-column
+                                prop="address"
+                                label="操作">
+                            <template scope="scope">
+                                <el-button size="small" @click="delExperience(scope.row,scope.$index,0);">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="el-row mt10">
+                        <div class="l">
+                            <el-button type="primary" @click="dialogTitle ='编辑教育情况';eduToggleDialog = true">新增</el-button>
+                        </div>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="编辑工作履历" name="third">
+                    <el-table
+                            :data="workList"
+                            style="width: 100%">
+                        <el-table-column
+                                prop="beginTime"
+                                label="开始时间"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="endTime"
+                                label="结束时间"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="instruction"
+                                label="公司名称">
+                        </el-table-column>
+                        <el-table-column
+                                prop="item"
+                                label="职位">
+                        </el-table-column>
+                        <el-table-column
+                                prop="remark"
+                                label="工作描述">
+                        </el-table-column>
+                        <el-table-column
+                                label="操作">
+                            <template scope="scope">
+                                <el-button size="small" @click="delExperience(scope.row,scope.$index,1);">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="el-row mt10">
+                        <div class="l">
+                            <el-button type="primary" @click="dialogTitle ='编辑工作履历';jobToggleDialog = true">新增</el-button>
+                        </div>
+                    </div>
+                </el-tab-pane>
+
+                <el-tab-pane label="编辑培训经历" name="fourth">
+                    <el-table
+                            :data="trainList"
+                            style="width: 100%">
+                        <el-table-column
+                                prop="beginTime"
+                                label="开始时间"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="endTime"
+                                label="结束时间"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="instruction"
+                                label="机构名称">
+                        </el-table-column>
+                        <el-table-column
+                                prop="item"
+                                label="培训课程">
+                        </el-table-column>
+                        <el-table-column
+                                prop="remark"
+                                label="培训描述">
+                        </el-table-column>
+                        <el-table-column
+                                label="操作">
+                            <template scope="scope">
+                                <el-button size="small" @click="delExperience(scope.row,scope.$index,2);">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="el-row mt10">
+                        <div class="l">
+                            <el-button type="primary" @click="dialogTitle ='编辑培训经历';trainToggleDialog = true">新增</el-button>
+                        </div>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="编辑获奖经历" name="fifth">
+                    <el-table
+                            :data="winingList"
+                            style="width: 100%">
+                        <el-table-column
+                                prop="beginTime"
+                                label="奖励时间"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="item"
+                                label="奖励名称"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="instruction"
+                                label="颁奖机构">
+                        </el-table-column>
+                        <el-table-column
+                                prop="level"
+                                label="奖项级别">
+                        </el-table-column>
+                        <el-table-column
+                                prop="remark"
+                                label="备注">
+                        </el-table-column>
+                        <el-table-column
+                                label="操作">
+                            <template scope="scope">
+                                <el-button size="small" @click="delExperience(scope.row,scope.$index,3);">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="el-row mt10">
+                        <div class="l">
+                            <el-button type="primary" @click="dialogTitle ='编辑获奖经历';winningToggleDialog = true">新增</el-button>
+                        </div>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="材料附件" name="sixth">
+                    <el-row class="mb15">
+                        <el-col :span="2" class="tr"><span>基本资料：</span></el-col>
+                        <el-col :span="22" class="rel">
+                            <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                                <el-button size="small" type="primary" @click="objData.type=4;fileDialog=true;">点击上传</el-button>
+                            </el-form-item>
+                            <el-upload
+                                    class="w300Upload leftUpload"
+                                    action="/employee/upload-file"
+                                    name="file[]"
+                                    :on-remove="handleRemoveKey"
+                                    :file-list="fileListData1">
+                            </el-upload>
+                            <ul class="abs t40l320">
+                                <li v-for="(v,k) in fileListData1" :key="k" class="pb5" style="list-style-type: none;height: 25px;">
+                                    <a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="editFile(v)">修改</span>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="delFile(v.id)">删除</span>
+                                </li>
+                            </ul>
+                        </el-col>
+                    </el-row>
+                    <el-row class="mb15">
+                        <el-col :span="2" class="tr"><span>档案资料：</span></el-col>
+                        <el-col :span="22" class="rel">
+                            <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                                <el-button size="small" type="primary" @click="objData.type=3;fileDialog=true;">点击上传</el-button>
+                            </el-form-item>
+                            <el-upload
+                                    class="w300Upload leftUpload"
+                                    action="/employee/upload-file"
+                                    name="file[]"
+                                    :on-remove="handleRemoveKey"
+                                    :file-list="fileListData2">
+                            </el-upload>
+                            <ul class="abs t40l320">
+                                <li v-for="(v,k) in fileListData2" :key="k" class="pb5" style="list-style-type: none;height: 25px;">
+                                    <a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="editFile(v)">修改</span>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="delFile(v.id)">删除</span>
+                                </li>
+                            </ul>
+                        </el-col>
+                    </el-row>
+                    <el-row class="mb15">
+                        <el-col :span="2" class="tr"><span>离职资料：</span></el-col>
+                        <el-col :span="22" class="rel">
+                            <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                                <el-button size="small" type="primary" @click="objData.type=2;fileDialog=true;">点击上传</el-button>
+                            </el-form-item>
+                            <el-upload
+                                    class="w300Upload leftUpload"
+                                    action="/employee/upload-file"
+                                    name="file[]"
+                                    :on-remove="handleRemoveKey"
+                                    :file-list="fileListData3">
+                            </el-upload>
+                            <ul class="abs t40l320">
+                                <li v-for="(v,k) in fileListData3" :key="k" class="pb5" style="list-style-type: none;height: 25px;">
+                                    <a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="editFile(v)">修改</span>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="delFile(v.id)">删除</span>
+                                </li>
+                            </ul>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="2" class="tr"><span>其他资料：</span></el-col>
+                        <el-col :span="22" class="rel">
+                            <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                                <el-button size="small" type="primary" @click="objData.type=1;fileDialog=true;">点击上传</el-button>
+                            </el-form-item>
+                            <el-upload
+                                    class="w300Upload leftUpload"
+                                    action="/employee/upload-file"
+                                    name="file[]"
+                                    :on-remove="handleRemoveKey"
+                                    :file-list="fileListData4">
+                            </el-upload>
+                            <ul class="abs t40l320">
+                                <li v-for="(v,k) in fileListData4" :key="k" class="pb5" style="list-style-type: none;height: 25px;">
+                                    <a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="editFile(v)">修改</span>
+                                    <span class="el-button el-button--primary pt5 pb5 pl10 pr10" @click="delFile(v.id)">删除</span>
+                                </li>
+                            </ul>
+                        </el-col>
+                    </el-row>
+                </el-tab-pane>
+            </el-tabs>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="editToggleDialog = false">取 消</el-button>
+            <el-button type="primary" @click="editSubmiter()">确 定</el-button>
+        </div>
+    </el-dialog>
+    <el-dialog title="上传附件" top="0%" v-model="fileDialog" @close="closeFile" size="tiny">
+        <el-form :model="objData" :rules="ruleForm" ref="ruleForm" label-width="100px">
+            <el-form-item label="资料名称" prop="name">
+                <el-input v-model="objData.name" placeholder="请输入资料名称"></el-input>
+            </el-form-item>
+            <el-form-item label="" label-width="130px">
+                <el-upload
+                        :data="parseParam(objData,'oaAdminister')"
+                        class="w300Upload"
+                        action="/employee/upload-file"
+                        :on-success="handlePreviewKey"
+                        :on-remove="handleRemoveKey"
+                        :before-upload="handleBeforeKey"
+                        name="file[]"
+                        :file-list="fileListData"
+                >
+                    <el-button size="small" type="primary">点击上传</el-button>
+                </el-upload>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+    <!-- 查看 -->
+    <el-dialog :title="dialogTitle" top="0%" v-model="lookToggleDialog" size="large">
+        <el-form :model="detailList" :rules="rules" ref="form">
+            <el-row class="mt10">
+                <img :src="detailList.avatar" width="124" height="150" class="l"/>
+                <el-row class="l calc-130">
+                    <el-col :span="8">
+                        <el-form-item label="姓名：" label-width="130px">
+                            {{detailList.name}}
+                        </el-form-item>
+                        <el-form-item label="隶属机构：" label-width="130px">
+                            {{detailList.organization}}
+                        </el-form-item>
+                        <el-form-item label="身份证号：" label-width="130px">
+                            {{detailList.idCard}}
+                        </el-form-item>
+                        <el-form-item label="入职时间：" label-width="130px">
+                            {{detailList.entryDate}}
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="性别：" label-width="130px">
+                            {{detailList.sex}}
+                        </el-form-item>
+                        <el-form-item label="职位：" label-width="130px">
+                            {{detailList.position}}
+                        </el-form-item>
+                        <el-form-item label="手机号：" label-width="130px">
+                            {{detailList.mobile}}
+                        </el-form-item>
+                        <el-form-item label="邮箱：" label-width="130px">
+                            {{detailList.email}}
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-row>
+            <div class="bbe pb10 mb20 b f16 pl30 pt30">基本信息</div>
+            <el-row class="ml130 mb10">
+                <el-col :span="8">
+                    <el-form-item label="户籍类型：" label-width="130px">
+                        {{detailList.residenceType}}
+                    </el-form-item>
+                    <el-form-item label="户籍城市：" label-width="130px">
+                        {{detailList.residenceCity}}
+                    </el-form-item>
+                    <el-form-item label="户籍地址：" label-width="130px">
+                        {{detailList.residenceAddress}}
+                    </el-form-item>
+                    <el-form-item label="政治面貌：" label-width="130px">
+                        {{detailList.politicalStatus}}
+                    </el-form-item>
+                    <el-form-item label="婚姻状况：" label-width="130px">
+                        {{detailList.marriage}}
+                    </el-form-item>
+                    <el-form-item label="合同年限：" label-width="130px">
+                        {{detailList.contractYears}}
+                    </el-form-item>
+                    <el-form-item label="合同日期：" label-width="130px">
+                        {{detailList.contractDate}}
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="学历：" label-width="130px">
+                        {{detailList.education}}
+                    </el-form-item>
+                    <el-form-item label="学位：" label-width="130px">
+                        {{detailList.degree}}
+                    </el-form-item>
+                    <el-form-item label="专业：" label-width="130px">
+                        {{detailList.major}}
+                    </el-form-item>
+                    <el-form-item label="民族：" label-width="130px">
+                        {{detailList.nation}}
+                    </el-form-item>
+                    <el-form-item label="所在地区：" label-width="130px">
+                        {{nameProvince}}{{nameCity}}{{nameArea}}
+                    </el-form-item>
+                    <el-form-item label="转正日期：" label-width="130px">
+                        {{detailList.positiveDate}}
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <div class="bbe pb10 mb20 b f16 pl30 pt30">通讯信息</div>
+            <el-row class="ml130 mb10">
+                <el-col :span="8">
+                    <el-form-item label="紧急联系人：" label-width="130px">
+                        {{detailList.linkMan}}
+                    </el-form-item>
+                    <el-form-item label="紧急联系人电话：" label-width="130px">
+                        {{detailList.linkPhone}}
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="紧急联系人关系：" label-width="130px">
+                        {{detailList.relation}}
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <div class="bbe pb10 mb20 b f16 pl30 pt30">教育情况</div>
+            <el-table
+                    :data="studyList"
+                    style="width: 100%">
+                <el-table-column
+                        prop="beginTime"
+                        label="入学时间"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="endTime"
+                        label="毕业时间"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="instruction"
+                        label="院校">
+                </el-table-column>
+                <el-table-column
+                        prop="item"
+                        label="专业">
+                </el-table-column>
+                <el-table-column
+                        prop="education"
+                        label="学历">
+                </el-table-column>
+                <el-table-column
+                        prop="degree"
+                        label="学位">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="备注">
+                </el-table-column>
+            </el-table>
+            <div class="bbe pb10 mb20 b f16 pl30 pt30">工作履历</div>
+            <el-table
+                    :data="workList"
+                    style="width: 100%">
+                <el-table-column
+                        prop="beginTime"
+                        label="开始时间"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="endTime"
+                        label="结束时间"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="instruction"
+                        label="公司名称">
+                </el-table-column>
+                <el-table-column
+                        prop="item"
+                        label="职位">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="工作描述">
+                </el-table-column>
+            </el-table>
+            <div class="bbe pb10 mb20 b f16 pl30 pt30">培训经历</div>
+            <el-table
+                    :data="trainList"
+                    style="width: 100%">
+                <el-table-column
+                        prop="beginTime"
+                        label="开始时间"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="endTime"
+                        label="结束时间"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="instruction"
+                        label="机构名称">
+                </el-table-column>
+                <el-table-column
+                        prop="item"
+                        label="培训课程">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="培训描述">
+                </el-table-column>
+            </el-table>
+            <div class="bbe pb10 mb20 b f16 pl30 pt30">获奖经历</div>
+            <el-table
+                    :data="winingList"
+                    style="width: 100%">
+                <el-table-column
+                        prop="beginTime"
+                        label="奖励时间"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="item"
+                        label="奖励名称"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="instruction"
+                        label="颁奖机构">
+                </el-table-column>
+                <el-table-column
+                        prop="level"
+                        label="奖项级别">
+                </el-table-column>
+                <el-table-column
+                        prop="remark"
+                        label="备注">
+                </el-table-column>
+            </el-table>
+            <div class="bbe pb10 mb20 b f16 pl30 pt30">附件</div>
+            <el-row class="mb15">
+                <el-col :span="2" class="tr"><span>基本资料：</span></el-col>
+                <el-col :span="22" class="rel">
+                    <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                        <el-button class="vh" size="small" type="primary" @click="objData.type=4;fileDialog=true;">点击上传</el-button>
+                    </el-form-item>
+                    <el-upload
+                            class="w300Upload leftUpload"
+                            action="/employee/upload-file"
+                            name="file[]"
+                            :file-list="fileListData1">
+                    </el-upload>
+                    <ul class="abs t40l320">
+                        <li v-for="(v,k) in fileListData1" :key="k" class="pb5" style="list-style-type: none;height: 25px;"><a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a></li>
+                    </ul>
+                </el-col>
+            </el-row>
+            <el-row class="mb15">
+                <el-col :span="2" class="tr"><span>档案资料：</span></el-col>
+                <el-col :span="22" class="rel">
+                    <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                        <el-button class="vh" size="small" type="primary" @click="objData.type=3;fileDialog=true;">点击上传</el-button>
+                    </el-form-item>
+                    <el-upload
+                            class="w300Upload leftUpload"
+                            action="/employee/upload-file"
+                            name="file[]"
+                            :file-list="fileListData2">
+                    </el-upload>
+                    <ul class="abs t40l320">
+                        <li v-for="(v,k) in fileListData2" :key="k" class="pb5" style="list-style-type: none;height: 25px;"><a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a></li>
+                    </ul>
+                </el-col>
+            </el-row>
+            <el-row class="mb15">
+                <el-col :span="2" class="tr"><span>离职资料：</span></el-col>
+                <el-col :span="22" class="rel">
+                    <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                        <el-button class="vh" size="small" type="primary" @click="objData.type=2;fileDialog=true;">点击上传</el-button>
+                    </el-form-item>
+                    <el-upload
+                            class="w300Upload leftUpload"
+                            action="/employee/upload-file"
+                            name="file[]"
+                            :file-list="fileListData3">
+                    </el-upload>
+                    <ul class="abs t40l320">
+                        <li v-for="(v,k) in fileListData3" :key="k" class="pb5" style="list-style-type: none;height: 25px;"><a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a></li>
+                    </ul>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2" class="tr"><span>其他资料：</span></el-col>
+                <el-col :span="22" class="rel">
+                    <el-form-item label="" label-width="320px" style="margin-bottom: 0">
+                        <el-button class="vh" size="small" type="primary" @click="objData.type=1;fileDialog=true;">点击上传</el-button>
+                    </el-form-item>
+                    <el-upload
+                            class="w300Upload leftUpload"
+                            action="/employee/upload-file"
+                            name="file[]"
+                            :file-list="fileListData4">
+                    </el-upload>
+                    <ul class="abs t40l320">
+                        <li v-for="(v,k) in fileListData4" :key="k" class="pb5" style="list-style-type: none;height: 25px;"><a class="el-button el-button--primary pt5 pb5 pl10 pr10" :href="v.url" target="_blank">查看</a></li>
+                    </ul>
+                </el-col>
+            </el-row>
+
+        </el-form>
+    </el-dialog>
+    <!-- 新增教育经历 -->
+    <el-dialog :title="dialogTitle" v-model="eduToggleDialog" size="tiny">
+        <el-form :model="studyForm" :rules="rules" ref="formStudy">
+            <el-form-item label="入学时间" label-width="120px" prop="beginTime" required>
+                <el-date-picker
+                        type="date"
+                        placeholder="选择日期"
+                        v-model="studyForm.beginTime"
+                        style="width:100%">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="毕业时间" label-width="120px" prop="endTime" required>
+                <el-date-picker
+                        type="date"
+                        placeholder="选择日期"
+                        v-model="studyForm.endTime"
+                        style="width:100%">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="学校" label-width="120px" prop="instruction">
+                <el-input v-model="studyForm.instruction" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="专业" label-width="120px" prop="item">
+                <el-input v-model="studyForm.item" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="学历" label-width="120px" prop="education">
+                <el-select placeholder="请选择活动区域" class="pct100" v-model="studyForm.education">
+                    <el-option label="博士" value="博士"></el-option>
+                    <el-option label="硕士" value="硕士"></el-option>
+                    <el-option label="本科" value="本科"></el-option>
+                    <el-option label="大专" value="大专"></el-option>
+                    <el-option label="高中" value="高中"></el-option>
+                    <el-option label="中专" value="中专"></el-option>
+                    <el-option label="初中及以下" value="初中及以下"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="学位" label-width="120px" prop="degree">
+                <el-select placeholder="请选择活动区域" class="pct100" v-model="studyForm.degree">
+                    <el-option label="学士" value="学士"></el-option>
+                    <el-option label="硕士" value="硕士"></el-option>
+                    <el-option label="博士" value="博士"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="备注" label-width="120px">
+                <el-input type="textarea" v-model="studyForm.remark" placeholder="请输入备注" auto-complete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="eduToggleDialog = false">取 消</el-button>
+            <el-button type="primary" @click="submitConfirm(0)">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!-- 新增工作经历 -->
+    <el-dialog :title="dialogTitle" v-model="jobToggleDialog" size="tiny">
+        <el-form :model="taskData" :rules="rules" ref="formWork">
+            <el-form-item label="开始时间" label-width="120px" prop="beginTime" required>
+                <el-date-picker
+                        type="date"
+                        placeholder="选择日期"
+                        v-model="taskData.beginTime"
+                        :picker-options="pickerOptions0"  style="width:100%">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="结束时间" label-width="120px" prop="endTime" required>
+                <el-date-picker
+                        type="date"
+                        placeholder="选择日期"
+                        v-model="taskData.endTime"
+                        :picker-options="pickerOptions0"  style="width:100%">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="公司名称" label-width="120px" prop="instruction">
+                <el-input v-model="taskData.instruction" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="职位" label-width="120px" prop="item">
+                <el-input v-model="taskData.item" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="培训描述" label-width="120px">
+                <el-input type="textarea" v-model="taskData.remark" placeholder="请输入备注" auto-complete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="jobToggleDialog = false">取 消</el-button>
+            <el-button type="primary" @click="submitConfirm(1)">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!-- 新增培训经历 -->
+    <el-dialog :title="dialogTitle" v-model="trainToggleDialog" size="tiny">
+        <el-form :model="trainForm" :rules="rules" ref="formTrain">
+            <el-form-item label="开始时间" label-width="120px" prop="beginTime" required>
+                <el-date-picker
+                        type="date"
+                        placeholder="选择日期"
+                        v-model="trainForm.beginTime"
+                        :picker-options="pickerOptions0"  style="width:100%">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="结束时间" label-width="120px" prop="endTime" required>
+                <el-date-picker
+                        type="date"
+                        placeholder="选择日期"
+                        v-model="trainForm.endTime"
+                        :picker-options="pickerOptions0"  style="width:100%">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="机构名称" label-width="120px" prop="instruction">
+                <el-input v-model="trainForm.instruction" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="培训课程" label-width="120px" prop="item">
+                <el-input v-model="trainForm.item" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="培训描述" label-width="120px">
+                <el-input type="textarea" v-model="trainForm.remark" placeholder="请输入备注" auto-complete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="trainToggleDialog = false">取 消</el-button>
+            <el-button type="primary" @click="submitConfirm(2)">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!-- 新增获奖经历 -->
+    <el-dialog :title="dialogTitle" v-model="winningToggleDialog" size="tiny">
+        <el-form :model="winingForm" :rules="rules" ref="formWinning">
+            <el-form-item label="获奖时间" label-width="120px" prop="beginTime" required>
+                <el-date-picker
+                        type="date"
+                        placeholder="选择日期"
+                        v-model="winingForm.beginTime"
+                        :picker-options="pickerOptions0"  style="width:100%">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="获奖名称" label-width="120px" prop="item">
+                <el-input v-model="winingForm.item" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="获奖机构" label-width="120px" prop="instruction">
+                <el-input v-model="winingForm.instruction" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="获奖级别" label-width="120px" prop="level">
+                <el-input v-model="winingForm.level" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="备注" label-width="120px">
+                <el-input type="textarea" v-model="winingForm.remark" placeholder="请输入备注" auto-complete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="winningToggleDialog = false">取 消</el-button>
+            <el-button type="primary" @click="submitConfirm(3)">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!--预览图片-->
+    <el-dialog v-model="dialogYl" size="tiny">
+        <el-row>
+            <el-col :span="8">姓名：{{dialogDatas.name}}</el-col>
+            <el-col :span="8">职位：{{dialogDatas.position}}</el-col>
+            <el-col :span="8">隶属：{{dialogDatas.orgName}}</el-col>
+        </el-row>
+        <img width="100%" :src="dialogDatas.qrcode" alt="">
+    </el-dialog>
+</div>

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Components\Traits\ErrorCode;
 use App\Components\UploadHelper;
-use App\components\traits\ErrorCode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
