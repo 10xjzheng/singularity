@@ -14,6 +14,7 @@ define(function () {
                 vRoleLoading: false,
                 typeName:['POS机','信用卡','贷款','车险','代理加盟'],
                 statusName:['待审核','通过','不通过'],
+                pageInfo: {total: 0, pageSize: 10, currentPage: 1},
                 /**
                  * 编辑模板
                  */
@@ -49,11 +50,13 @@ define(function () {
              */
             getList:function (page) {
                 vm.vRoleLoading = true;
-                $getData('/admin/applyList', {"type" : vm.type, "searchName": vm.searchName})
+                this.pageInfo.currentPage = page || 1;
+                $getData('/admin/applyList', {"type" : vm.type, "searchName": vm.searchName, "currentPage": page})
                     .then(function (data) {
                         vm.vRoleLoading = false;
                         if(data.errorCode == 0){
                             vm.list = data.data || [];
+                            vm.pageInfo.total = data.count;
                         }
                     })
             },

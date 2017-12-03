@@ -177,7 +177,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        Overtrue\LaravelWechat\ServiceProvider::class,
         Caffeinated\Modules\ModulesServiceProvider::class,
     ],
 
@@ -227,7 +226,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'EasyWeChat' => Overtrue\LaravelWechat\Facade::class,
         'Module' => Caffeinated\Modules\Facades\Module::class
 
     ],

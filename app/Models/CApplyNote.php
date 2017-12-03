@@ -81,8 +81,8 @@ class CApplyNote extends Model
         $query->when($searchName, function($query) use ($searchName){
             $query->where('name', 'like', '%' . $searchName . '%')->orWhere('mobile', 'like', '%' . $searchName . '%');
         });
-        $list = $query->orderBy('id', 'desc')->offset($offset)->limit($pageSize)->get();
         $count = $query->count();
+        $list = $query->orderBy('id', 'desc')->offset($offset)->limit($pageSize)->get();
         return ['data' => $list, 'count' => $count];
     }
 

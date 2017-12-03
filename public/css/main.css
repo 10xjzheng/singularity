@@ -97,7 +97,7 @@ a{text-decoration: none}
     margin-left: 10px;
 }
 .el-table td,.el-table th{
-    padding:5px 18px;
+    padding:5px 5px;
 }
 .el-table tr:hover{
     background: #f6faff;
