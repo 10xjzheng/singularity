@@ -73,7 +73,8 @@ class CApplyNote extends Model
     public function getList($userId, $type, $searchName, $currentPage = 1, $pageSize = 10)
     {
         $offset = ($currentPage - 1) * $pageSize;
-        $where = ['user_id'=> $userId];
+        $where = ['wechat_id' => 1];
+        if($userId > 0) $where = ['user_id'=> $userId];
         if($type > 0) {
             $where['type'] = $type;
         }

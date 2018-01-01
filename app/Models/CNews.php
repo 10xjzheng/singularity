@@ -15,11 +15,15 @@ class CNews extends Model
      * 获取资讯列表
      * @param int $wechatId
      */
-    public function getList($wechatId, CMaterial $material, $currentPage = 1, $pageSize = 10)
+    public function getList($wechatId, CMaterial $material, $currentPage = 1, $pageSize = 10, $searchName = '')
     {
         $offset = ($currentPage - 1) * $pageSize;
-        $list = self::where('wechat_id', $wechatId)->orderBy('id', 'desc')->offset($offset)->limit($pageSize)->get();
-        $count = self::where('wechat_id', $wechatId)->count();
+        $query = self::where('wechat_id', $wechatId);
+        if(!empty($searchName)) {
+            $query->where('title', 'like', '%' . $searchName . '%');
+        }
+        $count = $query->count();
+        $list = $query->orderBy('id', 'desc')->offset($offset)->limit($pageSize)->get();
         foreach ($list as &$row) {
             $row['main_pic'] = $material->getUrlById($row['main_pic_id']);
             $row['url'] = '/newsDetail/' . $row['id'];
@@ -42,4 +46,23 @@ class CNews extends Model
         $detail['main_pic'] = $material->getUrlById($detail['main_pic_id']);
         return ['data' => $detail];
     }
+
+    /**
+     * 编辑信息
+     * @param $wechatId
+     * @param array $data
+     */
+    public function edit($wechatId, $data = [])
+    {
+        $one = self::find($data['id']);
+        if(empty($one)) {
+            $one = new self();
+        }
+        $one->wechat_id = $wechatId;
+        $one->title = $data['title'];
+        $one->main_pic_id = $data['main_pic_id'];
+        $one->content = $data['content'];
+        return $one->save();
+    }
+
 }

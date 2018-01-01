@@ -1,0 +1,15 @@
+.txt-toolbar .panel-tab .content-container .content,
+.wangEditor-drop-panel .panel-tab .content-container .content {
+    display: none;
+    position: static;
+    overflow-y: auto;
+}
+
+.v-editor .wangEditor-container .wangEditor-txt h1,
+.v-editor .wangEditor-container .wangEditor-txt h2,
+.v-editor .wangEditor-container .wangEditor-txt h3,
+.v-editor .wangEditor-container .wangEditor-txt h4,
+.v-editor .wangEditor-container .wangEditor-txt h5,
+.v-editor .wangEditor-container .wangEditor-txt p {
+    margin: 5px 0;
+}

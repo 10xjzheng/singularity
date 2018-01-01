@@ -27,7 +27,7 @@ class Controller extends BaseController
      * 用户ID
      * @var int
      */
-    protected  $userId = 0;
+    protected  $userId = 1;
 
 
     /**

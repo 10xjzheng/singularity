@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>后台管理系统</title>
+    <title>奇点金服后台管理系统</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="renderer" content="webkit">
@@ -15,7 +15,7 @@
 <div id="app" v-loading.body="loading"  element-loading-text="拼命加载中">
     <div class="wrapper">
         <div class="header">
-            <div class="logo">平台管理系统</div>
+            <div class="logo">奇点金服管理系统</div>
             <div class="user-info">
                 <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
@@ -33,7 +33,6 @@
                 <el-submenu index="1">
                     <template slot="title"><i class="el-icon-menu"></i>申请管理</template>
                     <el-menu-item index="apply">申请列表</el-menu-item>
-                    <el-menu-item index="join">加盟列表</el-menu-item>
                 </el-submenu>
                 <el-submenu index="2">
                     <template slot="title"><i class="el-icon-date"></i>资讯管理</template>
@@ -42,7 +41,7 @@
                 <el-submenu index="3">
                     <template slot="title"><i class="el-icon-star-on"></i>系统配置</template>
                     <el-menu-item index="company">公司介绍</el-menu-item>
-                    <el-menu-item index="admins">管理员设置</el-menu-item>
+                    <!---<el-menu-item index="admins">管理员设置</el-menu-item>-->
                 </el-submenu>
             </el-menu>
         </div>

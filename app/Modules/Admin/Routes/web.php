@@ -21,5 +21,27 @@ Route::group(['prefix' => 'admin'], function () {
 
     //删除申请记录
     Route::post('/delNote', 'InfoController@delNote');
+
+    //资讯列表
+    Route::post('/newsList', 'InfoController@newsList');
+
+    //删除资讯
+    Route::post('/delNews', 'InfoController@delNews');
+
+    //上传图片
+    Route::post('/upload', 'UploadController@uploadImg');
+
+    //修改资讯
+    Route::post('/editNews', 'InfoController@editNews');
+
+    //公司信息
+    Route::post('/companyInfo', 'InfoController@companyInfo');
+
+    //保存公司信息
+    Route::post('/saveCompanyInfo', 'InfoController@saveCompanyInfo');
+
+    //保存公司信息
+    Route::post('/login', 'SiteController@login');
+
 });
 

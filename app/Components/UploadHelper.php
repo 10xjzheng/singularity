@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class UploadHelper
 {
      /**
-      * ͼƬ�ϴ�
+      * 图片上传
      * @param Request $request
      */
      public static function uploadImg(Request $request)

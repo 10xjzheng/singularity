@@ -4,29 +4,14 @@ namespace App\Modules\Admin\Http\Controllers;
 
 use App\Components\ArrayHelper;
 use App\Models\CApplyNote;
+use App\Models\CCompany;
+use App\Models\CMaterial;
+use App\Models\CNews;
 use App\Models\CUser;
 use Illuminate\Support\Facades\Input;
 
 class InfoController extends Controller
 {
-    /**
-     * @api 获取用户信息
-     * @return mixed
-     */
-    public function getInfo(CUser $user)
-    {
-        return ArrayHelper::format(0, $user->getInfo($this->userId));
-    }
-
-    /**
-     * @api 获取申请统计
-     * @return mixed
-     */
-    public function applyStat(CApplyNote $applyNote)
-    {
-        return ArrayHelper::format(0, $applyNote->statistics($this->userId));
-    }
-
     /**
      * @api 获取申请列表
      * @param int type 类型
@@ -38,7 +23,7 @@ class InfoController extends Controller
         $pageSize = Input::get('pageSize', 10);
         $type = (int)Input::get('type', 0);
         $searchName = Input::get('searchName', '');
-        return ArrayHelper::format(0, $applyNote->getList($this->userId, $type, $searchName, $currentPage, $pageSize));
+        return ArrayHelper::format(0, $applyNote->getList(0, $type, $searchName, $currentPage, $pageSize));
     }
 
     /**
@@ -92,4 +77,68 @@ class InfoController extends Controller
         $id = (int)Input::get('id', '');
         return ArrayHelper::format($applyNote::destroy($id) ? 0 : $applyNote->getErrorCode());
     }
+
+    /**
+     * @api 获取资讯列表
+     */
+    public function newsList(CNews $news, CMaterial $material)
+    {
+        $currentPage = Input::get('currentPage', 1);
+        $pageSize = Input::get('pageSize', 10);
+        $searchName = Input::get('searchName', '');
+        return ArrayHelper::format(0, $news->getList($this->wechatId, $material, $currentPage, $pageSize, $searchName));
+    }
+
+    /**
+     * @api 删除新闻
+     * @return mixed
+     */
+    public function delNews(CNews $news)
+    {
+        $id = (int)Input::get('id', '');
+        return ArrayHelper::format($news::destroy($id) ? 0 : $news->getErrorCode());
+    }
+
+    /**
+     * @api 编辑新闻
+     * @param CNews $news
+     */
+    public function editNews(CNews $news)
+    {
+        $data = [
+            'id' => (int)Input::get('id', 0),
+            'title' => Input::get('title', ''),
+            'content' => Input::get('content', ''),
+            'main_pic_id' => (int)Input::get('main_pic_id', 0),
+        ];
+        $result = $news->edit($this->wechatId, $data);
+        return ArrayHelper::format($result ? 0 : $news->getErrorCode());
+    }
+
+    /**
+     * @api 公司信息
+     * @return mixed
+     */
+    public function companyInfo(CCompany $company, CMaterial $material)
+    {
+        return ArrayHelper::format(0, $company->getDetail(Input::get('id', 1), $material));
+    }
+
+    /**
+     * @api 编辑公司信息
+     * @param CNews $news
+     */
+    public function saveCompanyInfo(CCompany $company)
+    {
+        $data = [
+            'id' => (int)Input::get('id', 0),
+            'name' => Input::get('name', ''),
+            'intro' => Input::get('intro', ''),
+            'tel' => Input::get('tel', ''),
+            'logo_id' => (int)Input::get('logo_id', 0),
+        ];
+        $result = $company->edit($data);
+        return ArrayHelper::format($result ? 0 : $company->getErrorCode());
+    }
+
 }

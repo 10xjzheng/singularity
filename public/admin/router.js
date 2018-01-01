@@ -12,10 +12,6 @@ define(function () {
         templateUrl: "/admin/apply/index.html",
         controllerUrl: "/admin/apply/index.js"
     },{
-        path: '/join', //加盟管理
-        templateUrl: "/admin/join/index.html",
-        controllerUrl: "/admin/join/index.js"
-    },{
         path: '/news', //加盟管理
         templateUrl: "/admin/news/index.html",
         controllerUrl: "/admin/news/index.js"
