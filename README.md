@@ -1,3 +1,2 @@
 # singularity
-a new project
-by xiaojun
+##laravel + vux + 微信公众号 练习小项目
